@@ -1,4 +1,4 @@
-    import mysql.connector
+import mysql.connector
 
 #Connecting to the LETSPLAY DB in mysql
 myDB = mysql.connector.connect(
@@ -100,7 +100,7 @@ def user_signup(uid,name,f_name,l_name,email,password,re_entry):
 
     
             
-
+# The user signin function
 def user_signin(name,password):
     name = input("Enter your username >>> ")
     password=input("Enter your password >>> ")
@@ -119,7 +119,7 @@ def user_signin(name,password):
     else:
         print ("Not successful , Invalid username or password")
         
-
+# The manager signin function
 def manager_signin(mid,password):
     mid = input("Enter the Manager ID >>> ")
     password=input("Enter your password >>> ")
@@ -129,65 +129,81 @@ def manager_signin(mid,password):
     DBcursor.execute(u_pass_get)
 
     result_pass_get = DBcursor.fetchall()
-    
+    success = False
     for i in result_pass_get:
         if mid == result_pass_get[zero][0] and password == result_pass_get[zero][1]:
             print ("SIGN IN SUCCESSFULL")
+            success = True
             break
         zero+=1
     else:
         print ("Not successful , Invalid username or password")
-        
-            
+        success = False
 
-home_pg = str(input("Enter u for User, m for Managers >>> "))
-if home_pg == 'U' or home_pg == 'u':
+    if success == True:
+        #when the signin is successful then manager page gets open
+        manager_page()
+        
+
+#The login page
+        
+def login_pg():
+    home_pg = str(input("Enter u for User, m for Managers >>> "))
+    if home_pg == 'U' or home_pg == 'u':
+        
+        login_pg = int(input("Enter 1 for Sign-In, 2 for Sign-Up >>> "))
+
+        if login_pg == 1:
+            username = ""
+            password = ""
+
+            user_signin(username,password)
+            
+        elif login_pg == 2:
+            name = ""
+            f_name = ""
+            l_name = ""
+            email = ""
+            password = ""
+            re_entry = ""
+            userid = ""
+
+
+            #getting all the user_id
+            DBcursor.execute("select user_id from user_details;")
+
+            all_users= DBcursor.fetchall()
+            
+            if len(all_users)==0:
+                userid = "ud1"
+
+            else:
+                #last user id created
+                u_p = all_users[len(all_users)-1][0]
+            
+                userid = "ud" + str(int(u_p[2::])+1)
+                
+                
+            user_signup(userid,name,f_name,l_name,email,password,re_entry)
+
+    elif home_pg == 'M' or home_pg == 'm':
+        #manager signin
+        m_un = ""
+        m_pw=""
+        
+
+        manager_signin(m_un,m_pw)
+
+
+
+# MANAGER PAGE
+
+def manager_page():
+
     
-    login_pg = int(input("Enter 1 for Sign-In, 2 for Sign-Up >>> "))
-
-    if login_pg == 1:
-        username = ""
-        password = ""
-
-        user_signin(username,password)
-        
-    elif login_pg == 2:
-        name = ""
-        f_name = ""
-        l_name = ""
-        email = ""
-        password = ""
-        re_entry = ""
-        userid = ""
-
-
-        #getting all the user_id
-        DBcursor.execute("select user_id from user_details;")
-
-        all_users= DBcursor.fetchall()
-        
-        if len(all_users)==0:
-            userid = "ud1"
-
-        else:
-            #last user id created
-            u_p = all_users[len(all_users)-1][0]
-        
-            userid = "ud" + str(int(u_p[2::])+1)
-            
-            
-        user_signup(userid,name,f_name,l_name,email,password,re_entry)
-
-elif home_pg == 'M' or home_pg == 'm':
-    #manager signin
-    m_un = ""
-    m_pw=""
-    
-
-    manager_signin(m_un,m_pw)
-
-
-
+#after running the code login page will open
+if __name__ == '__main__':
+    login_pg()
 
 
     
